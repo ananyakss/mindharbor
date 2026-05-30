@@ -1,0 +1,10 @@
+{
+  "source_csv": "go_emotions_dataset.csv",
+  "text_column": "text",
+  "label_source": "goemotions_one_hot_to_sentiment",
+  "row_count_after_cleaning": 118828,
+  "class_distribution": {
+    "positive": 64090,
+    "negative": 54738
+  }
+}

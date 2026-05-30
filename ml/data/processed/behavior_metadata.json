@@ -1,0 +1,23 @@
+{
+  "source_csv": "Wellbeing_and_lifestyle_data_Kaggle.csv",
+  "selected_columns": {
+    "SLEEP_HOURS": "SLEEP_HOURS",
+    "DAILY_STEPS": "DAILY_STEPS",
+    "FRUITS_VEGGIES": "FRUITS_VEGGIES",
+    "SOCIAL_NETWORK": "SOCIAL_NETWORK",
+    "TIME_FOR_PASSION": "TIME_FOR_PASSION",
+    "DAILY_STRESS": "DAILY_STRESS",
+    "WORK_LIFE_BALANCE_SCORE": "WORK_LIFE_BALANCE_SCORE"
+  },
+  "processed_columns": [
+    "sleep",
+    "steps",
+    "diet",
+    "social",
+    "hobbies",
+    "stress",
+    "risk_level"
+  ],
+  "row_count_after_cleaning": 15971,
+  "wlb_threshold": 667.7
+}

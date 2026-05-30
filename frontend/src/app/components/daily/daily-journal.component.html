@@ -1,0 +1,100 @@
+<section class="daily">
+  <header class="daily__header">
+    <div>
+      <h1>Daily Journal</h1>
+      <p>Capture quick reflections and daily stats.</p>
+    </div>
+    <button type="button" class="btn secondary" *ngIf="editingId()" (click)="cancelEdit()">Cancel edit</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="card">
+    <div class="grid">
+      <label>
+        <span>Date</span>
+        <input type="date" formControlName="date" />
+      </label>
+
+      <label>
+        <span>Mood</span>
+        <select formControlName="mood">
+          <option value="" disabled>Select mood</option>
+          @for (mood of moods; track mood) {
+            <option [value]="mood">{{ mood | titlecase }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>Mood emoji <small>(optional)</small></span>
+        <input type="text" formControlName="moodEmoji" maxlength="2" />
+      </label>
+    </div>
+
+    <label>
+      <span>Entry</span>
+      <textarea rows="4" formControlName="entryText" placeholder="How did today feel?"></textarea>
+    </label>
+
+    <div class="grid">
+      <label>
+        <span>Sleep hours</span>
+        <input type="number" min="0" max="24" step="0.5" formControlName="sleepHours" />
+      </label>
+      <label>
+        <span>Water (glasses)</span>
+        <input type="number" min="0" max="30" formControlName="waterGlasses" />
+      </label>
+      <label>
+        <span>Food notes</span>
+        <input type="text" formControlName="foodNotes" placeholder="Meals, cravings…" />
+      </label>
+    </div>
+
+    <fieldset class="gratitude">
+      <legend>Gratitude (up to 3)</legend>
+      <div class="grid">
+        <input type="text" placeholder="Grateful for…" formControlName="gratitude1" />
+        <input type="text" placeholder="Grateful for…" formControlName="gratitude2" />
+        <input type="text" placeholder="Grateful for…" formControlName="gratitude3" />
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn primary" [disabled]="saving()">
+      {{ saving() ? 'Saving…' : editingId() ? 'Update entry' : 'Save entry' }}
+    </button>
+  </form>
+
+  <section class="card">
+    <header class="list-header">
+      <h2>Saved entries</h2>
+      <span *ngIf="loading()">Loading…</span>
+    </header>
+
+    <ul *ngIf="entries().length; else emptyState">
+      @for (entry of entries(); track entry.id) {
+        <li>
+          <div class="entry-summary">
+            <h3>{{ entry.date | date : 'fullDate' }}</h3>
+            <p>{{ entry.entryText }}</p>
+            <small>
+              Sleep: {{ entry.sleepHours }}h • Water: {{ entry.waterGlasses }} glasses • Mood:
+              {{ entry.mood }} {{ entry.moodEmoji ?? '' }}
+            </small>
+            <small *ngIf="entry.gratitude.length">Gratitude: {{ entry.gratitude.join(', ') }}</small>
+          </div>
+          <div class="entry-actions">
+            <button type="button" class="btn secondary" (click)="editEntry(entry)">Edit</button>
+            <button type="button" class="btn link" (click)="deleteEntry(entry.id)">Delete</button>
+          </div>
+        </li>
+      }
+    </ul>
+    <ng-template #emptyState>
+      <p class="empty-text">No entries yet. Start with today’s reflection.</p>
+    </ng-template>
+  </section>
+
+  <p class="error" *ngIf="error()">{{ error() }}</p>
+</section>
+
+

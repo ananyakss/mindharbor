@@ -1,0 +1,58 @@
+<div class="page">
+  <h1 class="page-title">Mood Tracker 💗</h1>
+  <p class="page-sub">Name what you feel, tune the intensity, and let the pattern become visible over time.</p>
+
+  <div class="card form-card" *ngIf="!loading()">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid">
+        <label>
+          Day
+          <input type="date" formControlName="recordedAt" />
+        </label>
+        <label>
+          Intensity (1–10)
+          <input type="number" min="1" max="10" formControlName="moodIntensity" />
+        </label>
+      </div>
+
+      <p class="section-label">How are you feeling?</p>
+      <div class="mood-grid">
+        <button
+          type="button"
+          class="mood-chip"
+          *ngFor="let m of options"
+          [class.selected]="form.controls.mood.value === m.value"
+          (click)="selectMood(m.value)"
+        >
+          <span class="big">{{ m.emoji }}</span>
+          <span>{{ m.label }}</span>
+        </button>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit" [disabled]="saving()">
+          {{ editingId() ? 'Update entry' : 'Save mood' }} ✨
+        </button>
+        <button *ngIf="editingId()" type="button" class="btn btn-ghost" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <p *ngIf="loading()" class="hint">Loading your moods… 🌤️</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <section class="list" *ngIf="entries().length">
+    <h2>Recent logs 📒</h2>
+    <div class="card entry" *ngFor="let e of entries()">
+      <div class="entry-top">
+        <span class="pill">{{ e.recordedAt | date: 'mediumDate' }}</span>
+        <span class="pill soft">Intensity {{ e.moodIntensity }}/10</span>
+      </div>
+      <div class="entry-mood">{{ e.mood }}</div>
+      <div class="entry-actions">
+        <button type="button" class="btn btn-ghost" (click)="edit(e)">Edit</button>
+        <button type="button" class="btn btn-ghost" (click)="delete(e.id)">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>

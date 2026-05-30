@@ -1,0 +1,32 @@
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <span class="brand-emoji">🌸</span>
+      <div>
+        <div class="brand-title">Mindful Harbor</div>
+        <div class="brand-tag">A gentle space for you</div>
+      </div>
+    </div>
+    <div class="user-pill" *ngIf="user() as u">
+      <span>Hi, {{ u.username }} ✨</span>
+    </div>
+  </header>
+
+  <nav class="nav card">
+    <a
+      *ngFor="let item of nav"
+      [routerLink]="item.path"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="item.path === '/therapy' ? { exact: false } : { exact: true }"
+      class="nav-link"
+    >
+      <span class="emoji">{{ item.emoji }}</span>
+      {{ item.label }}
+    </a>
+    <button type="button" class="btn btn-ghost logout" (click)="logout()">Logout 🚪</button>
+  </nav>
+
+  <main class="main">
+    <router-outlet />
+  </main>
+</div>

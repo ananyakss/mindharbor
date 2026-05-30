@@ -1,0 +1,13 @@
+<div class="page">
+  <h1 class="page-title">Therapy modules 🧠</h1>
+  <p class="page-sub">Pick a structured worksheet. Everything saves privately to your account.</p>
+
+  <div class="grid">
+    <a *ngFor="let m of modules" [routerLink]="m.path" class="card module">
+      <div class="emoji">{{ m.emoji }}</div>
+      <div class="title">{{ m.title }}</div>
+      <p class="blurb">{{ m.blurb }}</p>
+      <span class="cta">Open →</span>
+    </a>
+  </div>
+</div>

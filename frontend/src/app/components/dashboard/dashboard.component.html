@@ -1,0 +1,65 @@
+<div class="page">
+  <h1 class="page-title">Dashboard 🌈</h1>
+  <p class="page-sub">A soft overview of your week — trends, care habits, and recent reflections.</p>
+
+  <p *ngIf="loading()" class="hint">Gathering your gentle stats…</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <ng-container *ngIf="summary() as s">
+    <div class="grid-top">
+      <div class="card streak">
+        <div class="emoji">🔥</div>
+        <div>
+          <div class="label">Login streak</div>
+          <div class="big">{{ s.loginStreak }} days</div>
+        </div>
+      </div>
+      <div class="card points">
+        <div class="emoji">⭐</div>
+        <div>
+          <div class="label">Kind points</div>
+          <div class="big">{{ s.gamificationPoints }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chart-card">
+      <h2>Weekly mood trend 📈</h2>
+      <p class="muted">Line shows recorded intensity (0 when a day has no mood log yet).</p>
+      <canvas #moodChart height="120"></canvas>
+    </div>
+
+    <div class="card behavior" *ngIf="s.behavioralSummary as b; else noBehavior">
+      <h2>Behavioral snapshot 🧍</h2>
+      <ul>
+        <li>Sleep: {{ b.sleep }} · Water: {{ b.water }}</li>
+        <li>Meals: B {{ b.meals.breakfast ? 'yes' : 'no' }}, L {{ b.meals.lunch ? 'yes' : 'no' }}, D {{ b.meals.dinner ? 'yes' : 'no' }}</li>
+        <li>Exercise Hours: {{ b.exerciseHours }} · Steps: {{ b.steps }}</li>
+        <li>Diet: {{ b.diet }} · Social: {{ b.social }} · Hobbies: {{ b.hobbies }} · Stress: {{ b.stress }}</li>
+      </ul>
+      <a routerLink="/behavior" class="link">Update behavior log →</a>
+    </div>
+    <ng-template #noBehavior>
+      <div class="card behavior empty">
+        <h2>Behavioral snapshot 🧍</h2>
+        <p>No behavior log this week yet.</p>
+        <a routerLink="/behavior" class="link">Add a behavior day →</a>
+      </div>
+    </ng-template>
+
+    <div class="card journal-card">
+      <h2>Recent journal entries 📓</h2>
+      <div *ngIf="!s.recentJournalEntries.length" class="muted">No journal entries yet.</div>
+      <div class="journal-item" *ngFor="let j of s.recentJournalEntries">
+        <div class="meta">
+          <span class="pill">{{ j.createdAt | date: 'medium' }}</span>
+          <span class="pill soft" *ngIf="j.allowAnalysisConsent">Analysis OK</span>
+        </div>
+        <p>{{ j.entryText | slice: 0 : 200 }}{{ j.entryText.length > 200 ? '…' : '' }}</p>
+      </div>
+      <a routerLink="/journal" class="link">Open journal →</a>
+    </div>
+  </ng-container>
+
+  <button type="button" class="btn btn-ghost" (click)="refresh()">Refresh 🔄</button>
+</div>

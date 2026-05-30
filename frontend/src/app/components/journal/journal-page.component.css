@@ -1,0 +1,68 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(230, 230, 250, 0.45));
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 160px;
+}
+
+.check {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.error {
+  color: #a94442;
+  font-weight: 600;
+}
+
+.entry {
+  margin-bottom: 0.75rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.pill {
+  background: var(--peach);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pill.soft {
+  background: rgba(152, 255, 152, 0.45);
+}
+
+.text {
+  margin: 0;
+  white-space: pre-wrap;
+}

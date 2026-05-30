@@ -1,0 +1,41 @@
+<div class="page">
+  <a routerLink="/therapy" class="sub-back">← Therapy modules</a>
+  <h1 class="page-title">Self-worth worksheet 💎</h1>
+  <p class="page-sub">You are allowed to separate who you are from what happened.</p>
+
+  <p *ngIf="loading()" class="loading-hint">Loading saved worksheets…</p>
+
+  <form *ngIf="!loading()" [formGroup]="form" (ngSubmit)="submit()" class="card worksheet">
+    <label>1 · Identify trigger <textarea formControlName="identifyTrigger" rows="3"></textarea></label>
+    <label>2 · Impact analysis <textarea formControlName="impactAnalysis" rows="3"></textarea></label>
+    <label>3 · Reality check <textarea formControlName="realityCheck" rows="3"></textarea></label>
+    <label>4a · What defines self-worth <textarea formControlName="definesSelfWorth" rows="3"></textarea></label>
+    <label>4b · What does NOT define self-worth <textarea formControlName="doesNotDefineSelfWorth" rows="3"></textarea></label>
+    <label>5 · Acts of care (select or write) <textarea formControlName="actsOfCare" rows="3"></textarea></label>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit" [disabled]="saving()">
+        {{ editingId() ? 'Update' : 'Save' }} ✨
+      </button>
+      <button *ngIf="editingId()" type="button" class="btn btn-ghost" (click)="cancelEdit()">Cancel edit</button>
+    </div>
+    <p *ngIf="message()" class="msg">{{ message() }}</p>
+  </form>
+
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <section class="list" *ngIf="entries().length">
+    <h2>Past entries 📚</h2>
+    <div class="card entry" *ngFor="let e of entries()">
+      <div class="pill-row">
+        <span class="pill">{{ e.createdAt | date: 'medium' }}</span>
+      </div>
+      <p class="snippet">
+        {{ e.identifyTrigger | slice: 0 : 140 }}{{ e.identifyTrigger.length > 140 ? '…' : '' }}
+      </p>
+      <div class="row">
+        <button type="button" class="btn btn-ghost" (click)="editEntry(e)">Review / edit</button>
+        <button type="button" class="btn btn-ghost" (click)="deleteEntry(e.id)">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>

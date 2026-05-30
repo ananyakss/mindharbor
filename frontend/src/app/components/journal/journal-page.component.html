@@ -1,0 +1,43 @@
+<div class="page">
+  <h1 class="page-title">Journal 📓</h1>
+  <p class="page-sub">Write freely. Your words stay yours — optionally allow analysis later for insights.</p>
+
+  <div class="card form-card" *ngIf="!loading()">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        Entry
+        <textarea rows="8" formControlName="entryText" placeholder="What's on your mind today?"></textarea>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" formControlName="allowAnalysisConsent" />
+        Allow this entry to be used for analysis (optional) 🔒
+      </label>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit" [disabled]="saving()">
+          {{ editingId() ? 'Update entry' : 'Save entry' }} ✍️
+        </button>
+        <button *ngIf="editingId()" type="button" class="btn btn-ghost" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <p *ngIf="loading()" class="hint">Opening your journal…</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <section *ngIf="entries().length">
+    <h2>Recent entries 🕊️</h2>
+    <div class="card entry" *ngFor="let e of entries()">
+      <div class="meta">
+        <span class="pill">{{ e.createdAt | date: 'medium' }}</span>
+        <span class="pill soft" *ngIf="e.allowAnalysisConsent">Analysis OK</span>
+      </div>
+      <p class="text">{{ e.entryText }}</p>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" (click)="edit(e)">Edit</button>
+        <button type="button" class="btn btn-ghost" (click)="delete(e.id)">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>

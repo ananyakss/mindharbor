@@ -1,0 +1,39 @@
+<div class="page">
+  <a routerLink="/therapy" class="sub-back">← Therapy modules</a>
+  <h1 class="page-title">Self-confidence worksheet 💪</h1>
+  <p class="page-sub">Four reflections — trigger, evidence, gentle doubt, and your next caring action.</p>
+
+  <p *ngIf="loading()" class="loading-hint">Loading saved worksheets…</p>
+
+  <form *ngIf="!loading()" [formGroup]="form" (ngSubmit)="submit()" class="card worksheet">
+    <label>1 · Identify trigger <textarea formControlName="identifyTrigger" rows="3"></textarea></label>
+    <label>2 · Supporting evidence <textarea formControlName="supportingEvidence" rows="3"></textarea></label>
+    <label>3 · Rationalize doubt <textarea formControlName="rationalizeDoubt" rows="3"></textarea></label>
+    <label>4 · Action plan <textarea formControlName="actionPlan" rows="3"></textarea></label>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit" [disabled]="saving()">
+        {{ editingId() ? 'Update' : 'Save' }} ✨
+      </button>
+      <button *ngIf="editingId()" type="button" class="btn btn-ghost" (click)="cancelEdit()">Cancel edit</button>
+    </div>
+    <p *ngIf="message()" class="msg">{{ message() }}</p>
+  </form>
+
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <section class="list" *ngIf="entries().length">
+    <h2>Past entries 📚</h2>
+    <div class="card entry" *ngFor="let e of entries()">
+      <div class="pill-row">
+        <span class="pill">{{ e.createdAt | date: 'medium' }}</span>
+      </div>
+      <p class="snippet">
+        {{ e.identifyTrigger | slice: 0 : 140 }}{{ e.identifyTrigger.length > 140 ? '…' : '' }}
+      </p>
+      <div class="row">
+        <button type="button" class="btn btn-ghost" (click)="editEntry(e)">Review / edit</button>
+        <button type="button" class="btn btn-ghost" (click)="deleteEntry(e.id)">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>

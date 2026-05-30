@@ -1,0 +1,86 @@
+<div class="page">
+  <h1 class="page-title">Behavior Tracker 🌿</h1>
+  <p class="page-sub">Track daily habits and save your behavioral log.</p>
+
+  <div class="card form-card" *ngIf="!loading()">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="grid">
+        <label>
+          Day
+          <input type="date" formControlName="day" />
+        </label>
+        <label>
+          How many hours do you sleep? (1-10)
+          <input type="number" step="0.1" min="1" max="10" formControlName="sleep" />
+        </label>
+        <label>
+          Water (glasses, 0-8)
+          <input type="number" min="0" max="8" formControlName="water" />
+        </label>
+        <label>
+          Exercise hours
+          <input type="number" min="0" formControlName="exerciseHours" />
+        </label>
+        <label>
+          Steps scale (0-10, thousands)
+          <input type="number" step="0.1" min="0" max="10" formControlName="steps" />
+        </label>
+        <label>
+          How many fruits/vegetables do you consume? (0-5)
+          <input type="number" step="0.1" min="0" max="5" formControlName="diet" />
+        </label>
+        <label>
+          How many people did you interact with today? (0-10)
+          <input type="number" step="0.1" min="0" max="10" formControlName="social" />
+        </label>
+        <label>
+          How many hours did you spend on hobbies? (0-10)
+          <input type="number" step="0.1" min="0" max="10" formControlName="hobbies" />
+        </label>
+        <label>
+          Stress level (1-5)
+          <input type="number" min="1" max="5" formControlName="stress" />
+        </label>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Meals</p>
+        <div class="checks">
+          <label class="check"><input type="checkbox" formControlName="breakfast" /> Breakfast</label>
+          <label class="check"><input type="checkbox" formControlName="lunch" /> Lunch</label>
+          <label class="check"><input type="checkbox" formControlName="dinner" /> Dinner</label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit" [disabled]="saving()">
+          {{ editingId() ? 'Update log' : 'Save log' }} 💾
+        </button>
+        <button *ngIf="editingId()" type="button" class="btn btn-ghost" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <p *ngIf="loading()" class="hint">Loading…</p>
+  <p *ngIf="error()" class="error">{{ error() }}</p>
+
+  <section *ngIf="entries().length">
+    <h2>Recent days 📅</h2>
+    <div class="card entry" *ngFor="let e of entries()">
+      <div class="row">
+        <span class="pill">{{ e.day | date: 'mediumDate' }}</span>
+        <span class="pill soft">Stress: {{ e.stress }}</span>
+      </div>
+      <ul>
+        <li>Sleep: {{ e.sleep }} · Water: {{ e.water }}</li>
+        <li>Meals: B {{ e.meals.breakfast ? 'yes' : 'no' }}, L {{ e.meals.lunch ? 'yes' : 'no' }}, D {{ e.meals.dinner ? 'yes' : 'no' }}</li>
+        <li>Diet: {{ e.diet }} · Exercise Hours: {{ e.exerciseHours }} · Steps: {{ e.steps }}</li>
+        <li>Social: {{ e.social }} · Hobbies: {{ e.hobbies }}</li>
+      </ul>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" (click)="edit(e)">Edit</button>
+        <button type="button" class="btn btn-ghost" (click)="delete(e.id)">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>

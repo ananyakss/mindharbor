@@ -1,0 +1,63 @@
+{
+  "task": "behavioral",
+  "results": [
+    {
+      "model_name": "logistic_regression",
+      "accuracy": 0.7956181533646323,
+      "weighted_f1": 0.7955956864913997,
+      "confusion_matrix": [
+        [
+          1254,
+          343
+        ],
+        [
+          310,
+          1288
+        ]
+      ],
+      "labels": [
+        "low",
+        "high"
+      ]
+    },
+    {
+      "model_name": "decision_tree",
+      "accuracy": 0.7158059467918623,
+      "weighted_f1": 0.7156163380339619,
+      "confusion_matrix": [
+        [
+          1102,
+          495
+        ],
+        [
+          413,
+          1185
+        ]
+      ],
+      "labels": [
+        "low",
+        "high"
+      ]
+    },
+    {
+      "model_name": "random_forest",
+      "accuracy": 0.7871674491392802,
+      "weighted_f1": 0.7871651556634995,
+      "confusion_matrix": [
+        [
+          1252,
+          345
+        ],
+        [
+          335,
+          1263
+        ]
+      ],
+      "labels": [
+        "low",
+        "high"
+      ]
+    }
+  ],
+  "best_model": "logistic_regression"
+}

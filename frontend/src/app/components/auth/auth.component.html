@@ -1,0 +1,45 @@
+<section class="auth">
+  <div class="auth__card">
+    <header class="auth__header">
+      <button type="button" [class.active]="mode() === 'signin'" (click)="toggleMode('signin')">
+        Sign In
+      </button>
+      <button type="button" [class.active]="mode() === 'signup'" (click)="toggleMode('signup')">
+        Sign Up
+      </button>
+    </header>
+
+    <form [formGroup]="authForm" (ngSubmit)="submit()">
+      <div class="field" *ngIf="mode() === 'signup'">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" autocomplete="username" />
+        <small class="error" *ngIf="authForm.controls.username.touched && authForm.controls.username.invalid">
+          Username must be at least 3 characters.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" />
+        <small class="error" *ngIf="authForm.controls.email.touched && authForm.controls.email.invalid">
+          Enter a valid email address.
+        </small>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+        <small class="error" *ngIf="authForm.controls.password.touched && authForm.controls.password.invalid">
+          Password must be at least 6 characters.
+        </small>
+      </div>
+
+      <p class="error" *ngIf="error()">{{ error() }}</p>
+
+      <button type="submit" class="btn primary" [disabled]="loading()">
+        {{ loading() ? 'Please wait…' : mode() === 'signin' ? 'Sign In' : 'Create Account' }}
+      </button>
+    </form>
+  </div>
+</section>
+
