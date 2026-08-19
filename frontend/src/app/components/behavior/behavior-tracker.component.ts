@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { BehaviorEntry, BehaviorEntryPayload } from '../../models/wellness.models';
 import { BehaviorService } from '../../services/behavior.service';
+import { MlService } from '../../services/ml.service';
 
 @Component({
   selector: 'app-behavior-tracker',
@@ -15,12 +16,15 @@ import { BehaviorService } from '../../services/behavior.service';
 export class BehaviorTrackerComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly behaviorService = inject(BehaviorService);
+  private readonly mlService = inject(MlService);
 
   protected readonly entries = signal<BehaviorEntry[]>([]);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly editingId = signal<string | null>(null);
+  protected readonly riskAssessment = signal<string | null>(null);
+  protected readonly predictionError = signal<string | null>(null);
 
   protected form = this.fb.nonNullable.group({
     day: [this.todayInput(), [Validators.required]],
@@ -68,6 +72,7 @@ export class BehaviorTrackerComponent implements OnInit {
 
     this.saving.set(true);
     this.error.set(null);
+    this.predictionError.set(null);
     const id = this.editingId();
     const req$ = id ? this.behaviorService.update(id, payload) : this.behaviorService.create(payload);
 
@@ -75,6 +80,7 @@ export class BehaviorTrackerComponent implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
+          this.requestBehaviorPrediction(payload);
           this.reset();
           this.load();
         },
@@ -154,5 +160,24 @@ export class BehaviorTrackerComponent implements OnInit {
   private toInput(iso: string): string {
     const d = new Date(iso);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  private requestBehaviorPrediction(payload: BehaviorEntryPayload): void {
+    this.mlService
+      .predictBehavior({
+        sleep: payload.sleep,
+        steps: payload.steps,
+        diet: payload.diet,
+        social: payload.social,
+        hobbies: payload.hobbies,
+        stress: payload.stress
+      })
+      .subscribe({
+        next: (result) => this.riskAssessment.set(result.riskLevel.toLowerCase()),
+        error: (err) => {
+          this.riskAssessment.set(null);
+          this.predictionError.set(err?.error?.message ?? 'Risk assessment is unavailable right now.');
+        }
+      });
   }
 }

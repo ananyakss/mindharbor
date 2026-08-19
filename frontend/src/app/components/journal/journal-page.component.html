@@ -26,6 +26,12 @@
   <p *ngIf="loading()" class="hint">Opening your journal…</p>
   <p *ngIf="error()" class="error">{{ error() }}</p>
 
+  <div class="card ml-result" *ngIf="textSentiment() as sentiment">
+    <h2>Text Analysis</h2>
+    <p class="ml-sentiment">{{ sentiment | titlecase }} sentiment</p>
+  </div>
+  <p *ngIf="predictionError()" class="error">{{ predictionError() }}</p>
+
   <section *ngIf="entries().length">
     <h2>Recent entries 🕊️</h2>
     <div class="card entry" *ngFor="let e of entries()">

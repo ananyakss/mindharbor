@@ -103,6 +103,15 @@ export interface TextPredictionPayload {
   mode?: 'comparison' | 'production';
 }
 
+export interface BehaviorPredictionResult {
+  riskLevel: string;
+  message?: string | null;
+}
+
+export interface TextPredictionResult {
+  sentiment: string;
+}
+
 export interface DashboardSummary {
   loginStreak: number;
   gamificationPoints: number;

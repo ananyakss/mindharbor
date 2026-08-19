@@ -13,6 +13,9 @@ var jwtSection = builder.Configuration.GetSection("Jwt");
 builder.Services.Configure<JwtOptions>(jwtSection);
 var jwtOptions = jwtSection.Get<JwtOptions>() ?? throw new InvalidOperationException("Jwt configuration is missing.");
 
+builder.Services.Configure<MlOptions>(builder.Configuration.GetSection("Ml"));
+builder.Services.AddHttpClient<MlPredictionService>();
+
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<AuthService>();

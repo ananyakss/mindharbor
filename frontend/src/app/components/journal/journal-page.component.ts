@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { JournalEntryModel } from '../../models/wellness.models';
 import { JournalEntriesService } from '../../services/journal-entries.service';
+import { MlService } from '../../services/ml.service';
 
 @Component({
   selector: 'app-journal-page',
@@ -15,12 +16,15 @@ import { JournalEntriesService } from '../../services/journal-entries.service';
 export class JournalPageComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly journalApi = inject(JournalEntriesService);
+  private readonly mlService = inject(MlService);
 
   protected readonly entries = signal<JournalEntryModel[]>([]);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly editingId = signal<string | null>(null);
+  protected readonly textSentiment = signal<string | null>(null);
+  protected readonly predictionError = signal<string | null>(null);
 
   protected form = this.fb.nonNullable.group({
     entryText: ['', [Validators.required, Validators.maxLength(20000)]],
@@ -45,6 +49,8 @@ export class JournalPageComponent implements OnInit {
 
     this.saving.set(true);
     this.error.set(null);
+    this.predictionError.set(null);
+    this.textSentiment.set(null);
     const id = this.editingId();
     const req$ = id ? this.journalApi.update(id, payload) : this.journalApi.create(payload);
 
@@ -52,6 +58,9 @@ export class JournalPageComponent implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: () => {
+          if (payload.allowAnalysisConsent) {
+            this.requestTextPrediction(payload.entryText);
+          }
           this.reset();
           this.load();
         },
@@ -94,5 +103,15 @@ export class JournalPageComponent implements OnInit {
   private reset(): void {
     this.editingId.set(null);
     this.form.reset({ entryText: '', allowAnalysisConsent: false });
+  }
+
+  private requestTextPrediction(entryText: string): void {
+    this.mlService.predictText(entryText).subscribe({
+      next: (result) => this.textSentiment.set(result.sentiment.toLowerCase()),
+      error: (err) => {
+        this.textSentiment.set(null);
+        this.predictionError.set(err?.error?.message ?? 'Text analysis is unavailable right now.');
+      }
+    });
   }
 }

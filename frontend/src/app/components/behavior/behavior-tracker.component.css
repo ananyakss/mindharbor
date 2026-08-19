@@ -92,3 +92,22 @@ ul {
   margin: 0;
   padding-left: 1.1rem;
 }
+
+.ml-result {
+  padding: 0.85rem 1rem;
+}
+
+.ml-result h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.ml-risk {
+  margin: 0;
+  font-weight: 700;
+  color: #2d6a4f;
+}
+
+.ml-risk.high {
+  color: #a94442;
+}

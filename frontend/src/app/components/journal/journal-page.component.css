@@ -66,3 +66,18 @@ textarea {
   margin: 0;
   white-space: pre-wrap;
 }
+
+.ml-result {
+  padding: 0.85rem 1rem;
+}
+
+.ml-result h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.ml-sentiment {
+  margin: 0;
+  font-weight: 700;
+  color: #4a4e69;
+}
