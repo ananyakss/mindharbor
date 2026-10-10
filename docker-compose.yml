@@ -1,0 +1,40 @@
+# Local full-stack run: docker compose up --build
+# Requires .env with MONGODB_URI and JWT_KEY (see .env.example)
+
+services:
+  ml:
+    build:
+      context: ./ml
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: "5000"
+
+  api:
+    build:
+      context: ./backend/NotesApi
+    ports:
+      - "5150:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__MongoDb: ${MONGODB_URI}
+      Ml__BaseUrl: http://ml:5000
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: mha-notes-api
+      Jwt__Audience: mha-notes-client
+      Cors__AllowedOrigins__0: http://localhost:8080
+      Cors__AllowedOrigins__1: http://localhost:4200
+    depends_on:
+      - ml
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        API_URL: http://localhost:5150/api
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+    depends_on:
+      - api

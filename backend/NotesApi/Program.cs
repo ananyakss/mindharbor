@@ -41,12 +41,18 @@ builder.Services.AddControllers()
     });
 builder.Services.AddOpenApi();
 
-// ✅ Add CORS service
+// ✅ Add CORS service (origins from config for Docker/Render; default local dev)
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+if (corsOrigins is null || corsOrigins.Length == 0)
+{
+    corsOrigins = ["http://localhost:4200"];
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Angular dev server
+        policy.WithOrigins(corsOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

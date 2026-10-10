@@ -1,0 +1,51 @@
+# Optional Render Blueprint — deploy from Dashboard: New > Blueprint > connect repo.
+# Set sync: false secrets in the Render UI after the first sync.
+# All services must use the same region for private networking (ML ↔ API).
+
+services:
+  - type: pserv
+    name: mha-ml
+    runtime: docker
+    dockerfilePath: ./ml/Dockerfile
+    dockerContext: ./ml
+    region: oregon
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+  - type: web
+    name: mha-api
+    runtime: docker
+    dockerfilePath: ./backend/NotesApi/Dockerfile
+    dockerContext: ./backend/NotesApi
+    region: oregon
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__Issuer
+        value: mha-notes-api
+      - key: Jwt__Audience
+        value: mha-notes-client
+      # Prompt in Dashboard (MongoDB Atlas connection string)
+      - key: ConnectionStrings__MongoDb
+        sync: false
+      - key: Jwt__Key
+        sync: false
+      # After mha-ml deploys: Connect > Internal, e.g. http://mha-ml:10000
+      - key: Ml__BaseUrl
+        sync: false
+      # After mha-frontend deploys: https://YOUR-FRONTEND.onrender.com
+      - key: Cors__AllowedOrigins__0
+        sync: false
+
+  - type: web
+    name: mha-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    region: oregon
+    envVars:
+      # Build-time + runtime (Render maps env to Docker ARG). Example:
+      # https://mha-api.onrender.com/api
+      - key: API_URL
+        sync: false

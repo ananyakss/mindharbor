@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+PORT="${PORT:-8080}"
+sed "s/listen 8080;/listen ${PORT};/" /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+exec nginx -g 'daemon off;'
