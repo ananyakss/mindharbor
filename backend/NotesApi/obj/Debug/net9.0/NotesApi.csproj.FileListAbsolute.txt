@@ -45,3 +45,4 @@
 /Users/ananya/mha/backend/NotesApi/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/ananya/mha/backend/NotesApi/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
 /Users/ananya/mha/backend/NotesApi/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/ananya/mha/backend/NotesApi/obj/Debug/net9.0/NotesApi.sourcelink.json
