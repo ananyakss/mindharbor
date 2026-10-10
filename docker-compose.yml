@@ -17,9 +17,9 @@ services:
       - "5150:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__MongoDb: ${MONGODB_URI}
+      ConnectionStrings__MongoDb: mongodb+srv://anukulk2020:123456anu@cluster0.kz4q66x.mongodb.net/?appName=Cluster0
       Ml__BaseUrl: http://ml:5000
-      Jwt__Key: ${JWT_KEY}
+      Jwt__Key: gxQwdyAcWpXtdrk6L0zmbrbSxn6UZafcOMtVkwxtngDLtsc+okTclRYrYKj+DvSF
       Jwt__Issuer: mha-notes-api
       Jwt__Audience: mha-notes-client
       Cors__AllowedOrigins__0: http://localhost:8080
