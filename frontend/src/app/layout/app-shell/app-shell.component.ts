@@ -22,7 +22,8 @@ export class AppShellComponent {
     { path: '/mood', label: 'Mood Tracker', emoji: '😊' },
     { path: '/behavior', label: 'Behavior', emoji: '🧍' },
     { path: '/journal', label: 'Journal', emoji: '📓' },
-    { path: '/therapy', label: 'Therapy', emoji: '🧠' }
+    { path: '/therapy', label: 'Therapy', emoji: '🧠' },
+    { path: '/resources', label: 'Resources', emoji: '📚' }
   ];
 
   protected logout(): void {

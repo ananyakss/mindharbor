@@ -44,6 +44,12 @@ public class BehaviorEntry
     [BsonElement("stress")]
     public int Stress { get; set; }
 
+    [BsonElement("mlModelRiskLevel")]
+    public string? MlModelRiskLevel { get; set; }
+
+    [BsonElement("mlAssessedAt")]
+    public DateTime? MlAssessedAt { get; set; }
+
     [BsonElement("createdAt")]
     public DateTime CreatedAt { get; set; }
 

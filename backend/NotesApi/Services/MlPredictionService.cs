@@ -41,16 +41,13 @@ public class MlPredictionService
 
         using var document = JsonDocument.Parse(body);
         var root = document.RootElement;
-        var riskLevel = root.GetProperty("risk_level").GetString()
+        var modelRiskLevel = root.GetProperty("risk_level").GetString()
             ?? throw new InvalidOperationException("ML service returned no risk_level.");
 
-        string? message = null;
-        if (root.TryGetProperty("message", out var messageElement))
-        {
-            message = messageElement.GetString();
-        }
+        var applicationRiskLevel = MapModelRiskToApplicationRisk(modelRiskLevel);
+        var message = BuildApplicationRiskMessage(applicationRiskLevel);
 
-        return new BehaviorPredictionResult(riskLevel, message);
+        return new BehaviorPredictionResult(modelRiskLevel, applicationRiskLevel, message);
     }
 
     public async Task<TextPredictionResult> PredictTextAsync(
@@ -97,6 +94,24 @@ public class MlPredictionService
         return $"ML service request failed with status {(int)statusCode}.";
     }
 
+    // Model labels reflect work-life balance score (high = better balance, low = worse balance).
+    // The application presents inverted risk meaning to users (low risk = good, high risk = bad).
+    private static string MapModelRiskToApplicationRisk(string modelRiskLevel) =>
+        modelRiskLevel.Trim().ToLowerInvariant() switch
+        {
+            "high" => "low",
+            "low" => "high",
+            _ => modelRiskLevel
+        };
+
+    private static string BuildApplicationRiskMessage(string applicationRiskLevel) =>
+        applicationRiskLevel.Trim().ToLowerInvariant() switch
+        {
+            "low" => "You seem to be doing well today.",
+            "moderate" => "Some imbalance detected.",
+            _ => "Your behavior indicates higher risk."
+        };
+
     public record BehaviorPredictionRequest(
         int Sleep,
         int Steps,
@@ -105,7 +120,7 @@ public class MlPredictionService
         int Hobbies,
         int Stress);
 
-    public record BehaviorPredictionResult(string RiskLevel, string? Message);
+    public record BehaviorPredictionResult(string ModelRiskLevel, string RiskLevel, string? Message);
 
     public record TextPredictionResult(string Sentiment);
 }

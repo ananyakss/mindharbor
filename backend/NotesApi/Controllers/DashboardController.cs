@@ -42,6 +42,7 @@ public class DashboardController : ControllerBase
         var moods = await _moodService.GetForUserSinceAsync(userId, weekStart);
         var behaviors = await _behaviorService.GetForUserSinceAsync(userId, weekStart);
         var journals = await _journalService.GetRecentForUserAsync(userId, 5);
+        var weeklyJournals = await _journalService.GetForUserSinceAsync(userId, weekStart);
 
         var moodByDay = new Dictionary<string, MoodEntry>();
         foreach (var m in moods.OrderByDescending(x => x.RecordedAt))
@@ -82,13 +83,92 @@ public class DashboardController : ControllerBase
                 latestBehavior.Day);
         }
 
+        var weeklyRiskSummary = BuildWeeklyRiskSummary(behaviors, weeklyJournals);
+
         return Ok(new DashboardSummaryDto(
             user.LoginStreak,
             user.GamificationPoints,
             trend,
             behaviorSummary,
-            journals));
+            journals,
+            weeklyRiskSummary));
 
+    }
+
+    private static WeeklyRiskSummaryDto BuildWeeklyRiskSummary(
+        IReadOnlyList<BehaviorEntry> behaviors,
+        IReadOnlyList<JournalEntry> journals)
+    {
+        var behavioral = BuildBehaviorWeeklyRisk(behaviors);
+        var textual = BuildTextWeeklyRisk(journals);
+        var overallMessage = BuildOverallMessage(behavioral, textual);
+
+        return new WeeklyRiskSummaryDto(behavioral, textual, overallMessage);
+    }
+
+    private static WeeklyRiskBreakdownDto? BuildBehaviorWeeklyRisk(IEnumerable<BehaviorEntry> behaviors)
+    {
+        var assessed = behaviors
+            .Where(b => !string.IsNullOrWhiteSpace(b.MlModelRiskLevel))
+            .ToList();
+
+        if (assessed.Count == 0)
+        {
+            return null;
+        }
+
+        var highRiskEntries = assessed.Count(b => IsBehaviorHighRisk(b.MlModelRiskLevel!));
+        var lowRiskEntries = assessed.Count - highRiskEntries;
+
+        return new WeeklyRiskBreakdownDto(assessed.Count, highRiskEntries, lowRiskEntries);
+    }
+
+    private static WeeklyRiskBreakdownDto? BuildTextWeeklyRisk(IEnumerable<JournalEntry> journals)
+    {
+        var assessed = journals
+            .Where(j => j.AllowAnalysisConsent && !string.IsNullOrWhiteSpace(j.MlSentiment))
+            .ToList();
+
+        if (assessed.Count == 0)
+        {
+            return null;
+        }
+
+        var highRiskEntries = assessed.Count(j => IsTextHighRisk(j.MlSentiment!));
+        var lowRiskEntries = assessed.Count - highRiskEntries;
+
+        return new WeeklyRiskBreakdownDto(assessed.Count, highRiskEntries, lowRiskEntries);
+    }
+
+    private static bool IsBehaviorHighRisk(string modelRiskLevel) =>
+        modelRiskLevel.Trim().Equals("low", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsTextHighRisk(string sentiment) =>
+        sentiment.Trim().Equals("negative", StringComparison.OrdinalIgnoreCase);
+
+    private static string? BuildOverallMessage(
+        WeeklyRiskBreakdownDto? behavioral,
+        WeeklyRiskBreakdownDto? textual)
+    {
+        if (behavioral is null && textual is null)
+        {
+            return null;
+        }
+
+        var behavioralElevated = behavioral is not null && behavioral.HighRiskEntries > behavioral.LowRiskEntries;
+        var textualElevated = textual is not null && textual.HighRiskEntries > textual.LowRiskEntries;
+
+        if (behavioralElevated && textualElevated)
+        {
+            return "Your recent behavioral and journal entries show some elevated-risk patterns.";
+        }
+
+        if (behavioralElevated || textualElevated)
+        {
+            return "Your recent entries show some elevated-risk patterns this week.";
+        }
+
+        return "Your recent entries have generally been lower risk this week.";
     }
 
     private string? GetUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -112,5 +192,16 @@ public class DashboardController : ControllerBase
         int GamificationPoints,
         IReadOnlyList<MoodTrendPointDto> WeeklyMoodTrend,
         BehaviorSummaryDto? BehavioralSummary,
-        IReadOnlyList<JournalEntry> RecentJournalEntries);
+        IReadOnlyList<JournalEntry> RecentJournalEntries,
+        WeeklyRiskSummaryDto WeeklyRiskSummary);
+
+    public record WeeklyRiskSummaryDto(
+        WeeklyRiskBreakdownDto? Behavioral,
+        WeeklyRiskBreakdownDto? Textual,
+        string? OverallMessage);
+
+    public record WeeklyRiskBreakdownDto(
+        int TotalEntries,
+        int HighRiskEntries,
+        int LowRiskEntries);
 }

@@ -49,4 +49,15 @@ public class BehaviorEntryService
         var result = await _entries.DeleteOneAsync(e => e.Id == id && e.UserId == userId);
         return result.DeletedCount > 0;
     }
+
+    public async Task<bool> UpdateMlAssessmentAsync(string userId, string id, string modelRiskLevel)
+    {
+        var update = Builders<BehaviorEntry>.Update
+            .Set(e => e.MlModelRiskLevel, modelRiskLevel)
+            .Set(e => e.MlAssessedAt, DateTime.UtcNow)
+            .Set(e => e.UpdatedAt, DateTime.UtcNow);
+
+        var result = await _entries.UpdateOneAsync(e => e.Id == id && e.UserId == userId, update);
+        return result.ModifiedCount > 0;
+    }
 }

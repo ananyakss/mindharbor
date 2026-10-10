@@ -39,8 +39,32 @@
 
 .chart-card h2,
 .behavior h2,
-.journal-card h2 {
+.journal-card h2,
+.weekly-risk-card h2 {
   margin-top: 0;
+}
+
+.weekly-risk-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(230, 230, 250, 0.45));
+}
+
+.weekly-risk-section {
+  margin-top: 0.75rem;
+}
+
+.weekly-risk-section h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.weekly-risk-section p {
+  margin: 0;
+}
+
+.weekly-risk-overall {
+  margin: 0.85rem 0 0;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .muted {

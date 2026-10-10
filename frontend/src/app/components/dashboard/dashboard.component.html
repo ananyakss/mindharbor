@@ -29,6 +29,19 @@
       <canvas #moodChart height="120"></canvas>
     </div>
 
+    <div class="card weekly-risk-card">
+      <h2>Weekly Risk Summary 🌿</h2>
+      <div class="weekly-risk-section">
+        <h3>Behavioral Risk</h3>
+        <p>{{ behavioralRiskSummary(s.weeklyRiskSummary.behavioral) }}</p>
+      </div>
+      <div class="weekly-risk-section">
+        <h3>Textual Risk</h3>
+        <p>{{ textualRiskSummary(s.weeklyRiskSummary.textual) }}</p>
+      </div>
+      <p *ngIf="s.weeklyRiskSummary.overallMessage as overall" class="weekly-risk-overall">{{ overall }}</p>
+    </div>
+
     <div class="card behavior" *ngIf="s.behavioralSummary as b; else noBehavior">
       <h2>Behavioral snapshot 🧍</h2>
       <ul>

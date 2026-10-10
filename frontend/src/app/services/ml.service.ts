@@ -13,6 +13,7 @@ export interface BehaviorPredictionInput {
   social: number;
   hobbies: number;
   stress: number;
+  behaviorEntryId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,7 +24,10 @@ export class MlService {
     return this.http.post<BehaviorPredictionResult>(`${environment.apiUrl}/predict/behavior`, payload);
   }
 
-  predictText(journalText: string) {
-    return this.http.post<TextPredictionResult>(`${environment.apiUrl}/predict/text`, { journalText });
+  predictText(journalText: string, journalEntryId?: string) {
+    return this.http.post<TextPredictionResult>(`${environment.apiUrl}/predict/text`, {
+      journalText,
+      journalEntryId
+    });
   }
 }

@@ -107,7 +107,7 @@ def predict_behavior(input_data: dict[str, Any], comparison_mode: bool = False) 
 
 def run_terminal_tests() -> None:
     test_cases = [
-        {"sleep": 2, "steps": 1, "diet": 0, "social": 0, "hobbies": 0},
+        {"sleep": 0, "steps": 0, "diet": 0, "social": 0, "hobbies": 0},
         {"sleep": 8, "steps": 8, "diet": 5, "social": 8, "hobbies": 7},
         {"sleep": 6, "steps": 4, "diet": 2, "social": 4, "hobbies": 3},
     ]

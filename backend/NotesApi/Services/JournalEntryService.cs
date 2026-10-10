@@ -24,6 +24,11 @@ public class JournalEntryService
             .Limit(take)
             .ToListAsync();
 
+    public async Task<List<JournalEntry>> GetForUserSinceAsync(string userId, DateTime sinceUtc) =>
+        await _entries.Find(e => e.UserId == userId && e.CreatedAt >= sinceUtc)
+            .SortByDescending(e => e.CreatedAt)
+            .ToListAsync();
+
     public async Task<JournalEntry?> GetByIdAsync(string userId, string id) =>
         await _entries.Find(e => e.Id == id && e.UserId == userId).FirstOrDefaultAsync();
 
@@ -49,5 +54,27 @@ public class JournalEntryService
     {
         var result = await _entries.DeleteOneAsync(e => e.Id == id && e.UserId == userId);
         return result.DeletedCount > 0;
+    }
+
+    public async Task<bool> UpdateMlSentimentAsync(string userId, string id, string sentiment)
+    {
+        var update = Builders<JournalEntry>.Update
+            .Set(e => e.MlSentiment, sentiment)
+            .Set(e => e.MlAssessedAt, DateTime.UtcNow)
+            .Set(e => e.UpdatedAt, DateTime.UtcNow);
+
+        var result = await _entries.UpdateOneAsync(e => e.Id == id && e.UserId == userId, update);
+        return result.ModifiedCount > 0;
+    }
+
+    public async Task<bool> ClearMlSentimentAsync(string userId, string id)
+    {
+        var update = Builders<JournalEntry>.Update
+            .Unset(e => e.MlSentiment)
+            .Unset(e => e.MlAssessedAt)
+            .Set(e => e.UpdatedAt, DateTime.UtcNow);
+
+        var result = await _entries.UpdateOneAsync(e => e.Id == id && e.UserId == userId, update);
+        return result.ModifiedCount > 0;
     }
 }

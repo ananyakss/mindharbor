@@ -23,7 +23,6 @@ export class BehaviorTrackerComponent implements OnInit {
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly editingId = signal<string | null>(null);
-  protected readonly riskAssessment = signal<string | null>(null);
   protected readonly predictionError = signal<string | null>(null);
 
   protected form = this.fb.nonNullable.group({
@@ -79,10 +78,9 @@ export class BehaviorTrackerComponent implements OnInit {
     req$
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: () => {
-          this.requestBehaviorPrediction(payload);
+        next: (savedEntry) => {
           this.reset();
-          this.load();
+          this.persistBehaviorPrediction(payload, savedEntry.id);
         },
         error: (err) => {
           console.error('Save failed:', err);
@@ -120,6 +118,14 @@ export class BehaviorTrackerComponent implements OnInit {
 
   protected cancelEdit(): void {
     this.reset();
+  }
+
+  protected behaviorRiskLabel(modelRiskLevel?: string | null): string | null {
+    if (!modelRiskLevel) return null;
+    const risk = modelRiskLevel.toLowerCase();
+    if (risk === 'high') return 'LOW RISK';
+    if (risk === 'low') return 'HIGH RISK';
+    return null;
   }
 
   private load(): void {
@@ -162,7 +168,7 @@ export class BehaviorTrackerComponent implements OnInit {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
-  private requestBehaviorPrediction(payload: BehaviorEntryPayload): void {
+  private persistBehaviorPrediction(payload: BehaviorEntryPayload, entryId: string): void {
     this.mlService
       .predictBehavior({
         sleep: payload.sleep,
@@ -170,13 +176,17 @@ export class BehaviorTrackerComponent implements OnInit {
         diet: payload.diet,
         social: payload.social,
         hobbies: payload.hobbies,
-        stress: payload.stress
+        stress: payload.stress,
+        behaviorEntryId: entryId
       })
       .subscribe({
-        next: (result) => this.riskAssessment.set(result.riskLevel.toLowerCase()),
+        next: () => {
+          this.predictionError.set(null);
+          this.load();
+        },
         error: (err) => {
-          this.riskAssessment.set(null);
           this.predictionError.set(err?.error?.message ?? 'Risk assessment is unavailable right now.');
+          this.load();
         }
       });
   }

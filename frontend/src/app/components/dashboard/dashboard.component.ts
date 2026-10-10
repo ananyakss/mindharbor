@@ -12,7 +12,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { finalize } from 'rxjs';
-import { DashboardSummary } from '../../models/wellness.models';
+import { DashboardSummary, WeeklyRiskBreakdown } from '../../models/wellness.models';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -51,6 +51,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected refresh(): void {
     this.load();
+  }
+
+  protected behavioralRiskSummary(breakdown: WeeklyRiskBreakdown | null | undefined): string {
+    if (!breakdown?.totalEntries) {
+      return 'No behavioral entries recorded this week.';
+    }
+    if (breakdown.highRiskEntries > breakdown.lowRiskEntries) {
+      return `${breakdown.highRiskEntries} of ${breakdown.totalEntries} logged days showed HIGH RISK.`;
+    }
+    return 'Your behavioral patterns have generally been LOW RISK this week.';
+  }
+
+  protected textualRiskSummary(breakdown: WeeklyRiskBreakdown | null | undefined): string {
+    if (!breakdown?.totalEntries) {
+      return 'No analyzed journal entries this week.';
+    }
+    if (breakdown.highRiskEntries > breakdown.lowRiskEntries) {
+      return `${breakdown.highRiskEntries} of ${breakdown.totalEntries} analyzed journal entries showed HIGH RISK.`;
+    }
+    return 'Your journal entries have generally been LOW RISK this week.';
   }
 
   private load(): void {

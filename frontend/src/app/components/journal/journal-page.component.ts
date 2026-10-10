@@ -23,7 +23,6 @@ export class JournalPageComponent implements OnInit {
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly editingId = signal<string | null>(null);
-  protected readonly textSentiment = signal<string | null>(null);
   protected readonly predictionError = signal<string | null>(null);
 
   protected form = this.fb.nonNullable.group({
@@ -50,19 +49,19 @@ export class JournalPageComponent implements OnInit {
     this.saving.set(true);
     this.error.set(null);
     this.predictionError.set(null);
-    this.textSentiment.set(null);
     const id = this.editingId();
     const req$ = id ? this.journalApi.update(id, payload) : this.journalApi.create(payload);
 
     req$
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: () => {
-          if (payload.allowAnalysisConsent) {
-            this.requestTextPrediction(payload.entryText);
-          }
+        next: (savedEntry) => {
           this.reset();
-          this.load();
+          if (payload.allowAnalysisConsent) {
+            this.persistTextPrediction(payload.entryText, savedEntry.id);
+          } else {
+            this.load();
+          }
         },
         error: () => this.error.set('Could not save journal entry.')
       });
@@ -88,6 +87,14 @@ export class JournalPageComponent implements OnInit {
     this.reset();
   }
 
+  protected sentimentRiskLabel(sentiment?: string | null): string | null {
+    if (!sentiment) return null;
+    const value = sentiment.toLowerCase();
+    if (value === 'positive') return 'LOW RISK';
+    if (value === 'negative') return 'HIGH RISK';
+    return null;
+  }
+
   private load(): void {
     this.loading.set(true);
     this.error.set(null);
@@ -105,12 +112,15 @@ export class JournalPageComponent implements OnInit {
     this.form.reset({ entryText: '', allowAnalysisConsent: false });
   }
 
-  private requestTextPrediction(entryText: string): void {
-    this.mlService.predictText(entryText).subscribe({
-      next: (result) => this.textSentiment.set(result.sentiment.toLowerCase()),
+  private persistTextPrediction(entryText: string, entryId: string): void {
+    this.mlService.predictText(entryText, entryId).subscribe({
+      next: () => {
+        this.predictionError.set(null);
+        this.load();
+      },
       error: (err) => {
-        this.textSentiment.set(null);
         this.predictionError.set(err?.error?.message ?? 'Text analysis is unavailable right now.');
+        this.load();
       }
     });
   }

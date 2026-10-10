@@ -40,6 +40,8 @@ export interface BehaviorEntry {
   social: number;
   hobbies: number;
   stress: number;
+  mlModelRiskLevel?: string | null;
+  mlAssessedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -66,6 +68,8 @@ export interface JournalEntryModel {
   userId: string;
   entryText: string;
   allowAnalysisConsent: boolean;
+  mlSentiment?: string | null;
+  mlAssessedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -104,6 +108,7 @@ export interface TextPredictionPayload {
 }
 
 export interface BehaviorPredictionResult {
+  modelRiskLevel: string;
   riskLevel: string;
   message?: string | null;
 }
@@ -112,12 +117,25 @@ export interface TextPredictionResult {
   sentiment: string;
 }
 
+export interface WeeklyRiskBreakdown {
+  totalEntries: number;
+  highRiskEntries: number;
+  lowRiskEntries: number;
+}
+
+export interface WeeklyRiskSummary {
+  behavioral: WeeklyRiskBreakdown | null;
+  textual: WeeklyRiskBreakdown | null;
+  overallMessage: string | null;
+}
+
 export interface DashboardSummary {
   loginStreak: number;
   gamificationPoints: number;
   weeklyMoodTrend: MoodTrendPoint[];
   behavioralSummary: BehavioralSummary | null;
   recentJournalEntries: JournalEntryModel[];
+  weeklyRiskSummary: WeeklyRiskSummary;
 }
 
 /** Saved worksheet row (CBT/ERP use their own models; therapy worksheets share this shape for metadata). */

@@ -25,11 +25,6 @@
 
   <p *ngIf="loading()" class="hint">Opening your journal…</p>
   <p *ngIf="error()" class="error">{{ error() }}</p>
-
-  <div class="card ml-result" *ngIf="textSentiment() as sentiment">
-    <h2>Text Analysis</h2>
-    <p class="ml-sentiment">{{ sentiment | titlecase }} sentiment</p>
-  </div>
   <p *ngIf="predictionError()" class="error">{{ predictionError() }}</p>
 
   <section *ngIf="entries().length">
@@ -40,6 +35,12 @@
         <span class="pill soft" *ngIf="e.allowAnalysisConsent">Analysis OK</span>
       </div>
       <p class="text">{{ e.entryText }}</p>
+      <div *ngIf="e.allowAnalysisConsent && e.mlSentiment" class="ml-log-meta">
+        <p class="ml-log-line">Sentiment: {{ e.mlSentiment | titlecase }}</p>
+        <p *ngIf="sentimentRiskLabel(e.mlSentiment) as risk" class="ml-log-assessment" [class.high]="risk === 'HIGH RISK'">
+          Risk Assessment: {{ risk }}
+        </p>
+      </div>
       <div class="actions">
         <button type="button" class="btn btn-ghost" (click)="edit(e)">Edit</button>
         <button type="button" class="btn btn-ghost" (click)="delete(e.id)">Delete</button>

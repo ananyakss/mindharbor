@@ -17,6 +17,7 @@ import { SelfConfidenceComponent } from './components/therapy/self-confidence.co
 import { SelfValidationComponent } from './components/therapy/self-validation.component';
 import { SelfWorthComponent } from './components/therapy/self-worth.component';
 import { TherapyHubComponent } from './components/therapy/therapy-hub.component';
+import { ResourcesPageComponent } from './components/resources/resources-page.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: 'mood', component: MoodTrackerComponent },
       { path: 'behavior', component: BehaviorTrackerComponent },
       { path: 'journal', component: JournalPageComponent },
+      { path: 'resources', component: ResourcesPageComponent },
       {
         path: 'therapy',
         component: TherapyLayoutComponent,

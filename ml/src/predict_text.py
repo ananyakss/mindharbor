@@ -69,8 +69,8 @@ def predict_text(journal_text: str, comparison_mode: bool = False) -> dict[str, 
 def run_terminal_tests() -> None:
     samples = [
         "I feel exhausted and scared about everything lately.",
-        "Today was normal, nothing special happened.",
-        "I felt joyful and grateful after spending time with my friends.",
+        "Today was okay, nothing special happened.",
+        "I feel sad and lonely.",
     ]
     print("Text prediction test cases:")
     for index, sample in enumerate(samples, start=1):

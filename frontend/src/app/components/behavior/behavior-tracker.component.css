@@ -111,3 +111,13 @@ ul {
 .ml-risk.high {
   color: #a94442;
 }
+
+.ml-log-assessment {
+  margin: 0.5rem 0 0;
+  font-weight: 700;
+  color: #2d6a4f;
+}
+
+.ml-log-assessment.high {
+  color: #a94442;
+}

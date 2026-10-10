@@ -63,11 +63,6 @@
 
   <p *ngIf="loading()" class="hint">Loading…</p>
   <p *ngIf="error()" class="error">{{ error() }}</p>
-
-  <div class="card ml-result" *ngIf="riskAssessment() as risk">
-    <h2>Risk Assessment</h2>
-    <p class="ml-risk" [class.high]="risk === 'high'">{{ risk === 'high' ? 'HIGH' : 'LOW' }} RISK</p>
-  </div>
   <p *ngIf="predictionError()" class="error">{{ predictionError() }}</p>
 
   <section *ngIf="entries().length">
@@ -83,6 +78,9 @@
         <li>Diet: {{ e.diet }} · Exercise Hours: {{ e.exerciseHours }} · Steps: {{ e.steps }}</li>
         <li>Social: {{ e.social }} · Hobbies: {{ e.hobbies }}</li>
       </ul>
+      <p *ngIf="behaviorRiskLabel(e.mlModelRiskLevel) as risk" class="ml-log-assessment" [class.high]="risk === 'HIGH RISK'">
+        Risk Assessment: {{ risk }}
+      </p>
       <div class="actions">
         <button type="button" class="btn btn-ghost" (click)="edit(e)">Edit</button>
         <button type="button" class="btn btn-ghost" (click)="delete(e.id)">Delete</button>

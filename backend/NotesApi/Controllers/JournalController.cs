@@ -77,6 +77,11 @@ public class JournalController : ControllerBase
 
         existing.EntryText = request.EntryText.Trim();
         existing.AllowAnalysisConsent = request.AllowAnalysisConsent;
+        if (!request.AllowAnalysisConsent)
+        {
+            existing.MlSentiment = null;
+            existing.MlAssessedAt = null;
+        }
 
         var updated = await _journalService.UpdateAsync(userId, id, existing);
         return updated is null ? NotFound() : Ok(updated);

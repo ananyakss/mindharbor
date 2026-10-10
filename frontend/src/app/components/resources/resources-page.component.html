@@ -1,0 +1,62 @@
+<div class="page">
+  <h1 class="page-title">Resources 📚</h1>
+  <p class="page-sub">
+    Helpful mental health support numbers, organizations, and wellness tools — gathered in one calm place.
+  </p>
+
+  <section class="section" aria-labelledby="crisis-heading">
+    <h2 id="crisis-heading" class="section-title">Crisis &amp; Helpline Support</h2>
+    <p class="notice">{{ crisisNotice }}</p>
+    <p class="disclaimer">{{ disclaimer }}</p>
+
+    <div class="helpline-grid">
+      <article class="card helpline-card" *ngFor="let line of helplines">
+        <h3 class="resource-name">{{ line.name }}</h3>
+        <p class="helpline-note" *ngIf="line.note">{{ line.note }}</p>
+        <ul class="number-list">
+          <li *ngFor="let num of line.numbers">
+            <a class="phone" [href]="'tel:' + num.tel">{{ num.display }}</a>
+            <a class="btn btn-ghost call-btn" [href]="'tel:' + num.tel">Call / Contact</a>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="healthcare-heading">
+    <h2 id="healthcare-heading" class="section-title">Healthcare &amp; Mental Health Organizations</h2>
+    <div class="resource-grid">
+      <article class="card resource-card" *ngFor="let org of healthcareOrgs">
+        <h3 class="resource-name">{{ org.name }}</h3>
+        <p class="blurb">{{ org.description }}</p>
+        <a
+          class="btn btn-primary visit-link"
+          [href]="org.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Visit Website
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tools-heading">
+    <h2 id="tools-heading" class="section-title">Mental Wellness Tools</h2>
+    <p class="tools-note">These apps and sites support everyday wellness — they are not emergency services.</p>
+    <div class="resource-grid">
+      <article class="card resource-card" *ngFor="let tool of wellnessTools">
+        <h3 class="resource-name">{{ tool.name }}</h3>
+        <p class="blurb">{{ tool.description }}</p>
+        <a
+          class="btn btn-primary visit-link"
+          [href]="tool.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Visit Website
+        </a>
+      </article>
+    </div>
+  </section>
+</div>

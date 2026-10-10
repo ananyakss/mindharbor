@@ -19,6 +19,12 @@ public class JournalEntry
     [BsonElement("allowAnalysisConsent")]
     public bool AllowAnalysisConsent { get; set; }
 
+    [BsonElement("mlSentiment")]
+    public string? MlSentiment { get; set; }
+
+    [BsonElement("mlAssessedAt")]
+    public DateTime? MlAssessedAt { get; set; }
+
     [BsonElement("createdAt")]
     public DateTime CreatedAt { get; set; }
 
